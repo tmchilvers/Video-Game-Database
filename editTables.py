@@ -14,11 +14,10 @@ def create_connection(db_file):
         return conn
     except Error as e:
         print(e)
-
     return conn
 
 
-def create_table(conn, create_table_sql):
+def input_sql_command(conn, sql_command):
     """ create a table from the create_table_sql statement
     :param conn: Connection object
     :param create_table_sql: a CREATE TABLE statement
@@ -26,7 +25,7 @@ def create_table(conn, create_table_sql):
     """
     try:
         c = conn.cursor()
-        c.execute(create_table_sql)
+        c.execute(sql_command)
         conn.commit()
     except Error as e:
         print(e)
@@ -44,19 +43,6 @@ def drop_table(conn, table):
     try:
         c = conn.cursor()
         c.execute(drop_table_sql)
-        conn.commit()
-    except Error as e:
-        print(e)
-
-def insert_record(conn, insert_command):
-    """ insert a record with insert_command statement
-    :param conn: Connection object
-    :param insert_command: a INSERT TABLE statement
-    :return:
-    """
-    try:
-        c = conn.cursor()
-        c.execute(insert_command)
         conn.commit()
     except Error as e:
         print(e)
