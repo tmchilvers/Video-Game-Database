@@ -6,33 +6,33 @@ WorldRecords(recordID, game, console, playerName, bestTime)
 Console(consoleID, name, sales, releaseYear, type);
 Game(gameID, title, console, releaseDate, sales, genre, franchise, studio, leadDev, averageTime, worldRecord)
 
-create table Genre(
-  genreID integer not null primary key,
+CREATE TABLE IF NOT EXISTS Genre(
+  genreID integer NOT NULL PRIMARY KEY,
   genre varchar(50)
 );
 
-create table Studio(
-  studioID integer not null primary key,
+CREATE TABLE IF NOT EXISTS Studio(
+  studioID integer NOT NULL PRIMARY KEY,
   name varchar(50),
   yearFounded integer
 );
 
-create table Developer(
-  devID integer not null primary key,
+CREATE TABLE IF NOT EXISTS Developer(
+  devID integer NOT NULL PRIMARY KEY,
   name varchar(50),
   yearsActive integer,
-  employer varchar(50) foreign key references Studio(name)
+  employer varchar(50) FOREIGN KEY REFERENCES Studio(name)
 );
 
-create table Franchise(
-  franchiseID integer not null primary key,
+CREATE TABLE IF NOT EXISTS Franchise(
+  franchiseID integer NOT NULL PRIMARY KEY,
   name varchar(50)
 );
 
-create table WorldRecords(
-  recordID integer not null primary key,
-  game varchar(50) references  Game(title),
-  console varchar(50) foreign key references Console(name),
+CREATE TABLE IF NOT EXISTS WorldRecords(
+  recordID integer NOT NULL PRIMARY KEY,
+  game varchar(50) REFERNCES Game(title),
+  console varchar(50) FOREIGN KEY REFERENCES Console(name),
   playerName varchar(50),
   bestTime numeric
 );
