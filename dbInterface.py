@@ -8,6 +8,7 @@ DATABASE = r"gameDB.db"
 ''' MAIN FUNCTIONS ---------------------------------------------'''
 # Let chooser choose what to do with database
 def startUp():
+    print("-----------------------------------")
     print("\nPlease select a function below:\n")
     print("    0. To EXIT program.")
     print("    1. Create the database: 'gameDB.db'")
@@ -16,7 +17,7 @@ def startUp():
     print("    4. Insert record into a table")
     print("    5. Delete record from a table")
     print("    6. Execute a query\n")
-    ans = input()
+    ans = input('> ')
     chooseFunc(ans)
 
 # Find function chosen by user
@@ -51,7 +52,7 @@ def createTable():
     conn = editTables.create_connection(DATABASE)
     if conn is not None:
         print("Please enter the SQL table create command below:")
-        create_table_sql = input()
+        create_table_sql = input('> ')
         editTables.input_sql_command(conn, create_table_sql)
     else:
         print("Error! Cannot create the database connection.")
@@ -61,7 +62,7 @@ def dropTable():
     conn = editTables.create_connection(DATABASE)
     if conn is not None:
         print("Please enter just the name of the table below:")
-        table = input()
+        table = input('> ')
         editTables.drop_table(conn, table)
     else:
         print("Error! Cannot create the database connection.")
@@ -71,7 +72,7 @@ def insertRecord():
     conn = editTables.create_connection(DATABASE)
     if conn is not None:
         print("Please enter the insert SQL command and data below:")
-        insert_command = input()
+        insert_command = input('> ')
         editTables.input_sql_command(conn, insert_command)
     else:
         print("Error! Cannot create the database connection.")
@@ -81,7 +82,7 @@ def deleteRecord():
     conn = editTables.create_connection(DATABASE)
     if conn is not None:
         print("Please enter the delete SQL command and data below:")
-        delete_command = input()
+        delete_command = input('> ')
         editTables.input_sql_command(conn, delete_command)
     else:
         print("Error! Cannot create the database connection.")

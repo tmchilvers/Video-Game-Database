@@ -18,7 +18,7 @@ def create_connection(db_file):
 
 
 def input_sql_command(conn, sql_command):
-    """ create a table from the create_table_sql statement
+    """ takes a general sql command
     :param conn: Connection object
     :param create_table_sql: a CREATE TABLE statement
     :return:
