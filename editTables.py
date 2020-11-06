@@ -17,6 +17,7 @@ def input_sql_command(conn, sql_command):
     """ takes a general sql command"""
     try:
         c = conn.cursor()
+        conn.execute("PRAGMA foreign_keys = on")
         c.execute(sql_command)
         conn.commit()
     except Error as e:
@@ -29,6 +30,7 @@ def drop_table(conn, table):
 
     try:
         c = conn.cursor()
+        conn.execute("PRAGMA foreign_keys = on")
         c.execute(drop_table_sql)
         conn.commit()
     except Error as e:
