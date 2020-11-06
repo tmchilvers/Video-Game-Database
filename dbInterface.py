@@ -16,7 +16,8 @@ def startUp():
     print("    3. Drop table from database")
     print("    4. Insert record into a table")
     print("    5. Delete record from a table")
-    print("    6. Execute a query\n")
+    print("    6. Update record from a table")
+    print("    7. Execute a query\n")
     ans = input('> ')
     chooseFunc(ans)
 
@@ -40,6 +41,9 @@ def chooseFunc(_ans):
 
     elif _ans == '5':
         deleteRecord()
+
+    elif _ans == '6':
+        updateRecord()
 
 ''' DATABASE FUNCTIONS ---------------------------------------------'''
 # 1. Create the video game database
@@ -81,9 +85,22 @@ def insertRecord():
 def deleteRecord():
     conn = editTables.create_connection(DATABASE)
     if conn is not None:
-        print("Please enter the delete SQL command and data below:")
-        delete_command = input('> ')
+        print("Please enter the table name below:")
+        table = input('> ')
+        print("Please enter the primary key value below ('primaryKey=1'):")
+        value = input('> ')
+        delete_command = ('DELETE FROM %s WHERE %s' % (table, value))
         editTables.input_sql_command(conn, delete_command)
+    else:
+        print("Error! Cannot create the database connection.")
+
+# 6. Insert a record into a table
+def updateRecord():
+    conn = editTables.create_connection(DATABASE)
+    if conn is not None:
+        print("Please enter the update SQL command and data below:")
+        update_command = input('> ')
+        editTables.input_sql_command(conn, update_command)
     else:
         print("Error! Cannot create the database connection.")
 

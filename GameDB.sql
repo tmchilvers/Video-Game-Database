@@ -1,80 +1,72 @@
-Genre(genreID, name)
-Studios(studioID, name, yearFounded, numEmployees)
-Developer(devID, name, yearsActive, employer)
-Franchises(franchiseID, name)
-Records(recordID, statsID, title, player, bestTime)
-Stats(statsID, gameID, avgTimeToBeat)
-Console(consoleID, name, sales, releaseYear, type)
-Games(gameID, title, console, releaseDate, sales, genre, franchise, studio, leadDev, averageTime, worldRecord)
-
-CREATE TABLE IF NOT EXISTS Genre(
-  genreID integer NOT NULL PRIMARY KEY,
-  name varchar(50)
-);
-
-CREATE TABLE IF NOT EXISTS Studios(
-  studioID integer NOT NULL PRIMARY KEY,
-  name varchar(50),
-  yearFounded integer,
-  numEmployees integer
-);
-
-CREATE TABLE IF NOT EXISTS Developer(
-  devID integer NOT NULL PRIMARY KEY,
-  studioID integer FOREIGN KEY REFERENCES Studio(studioID),
-  name varchar(50),
-  yearsActive integer
-);
-
-CREATE TABLE IF NOT EXISTS Franchises(
-  franchiseID integer NOT NULL PRIMARY KEY,
-  name varchar(50)
+CREATE TABLE IF NOT EXISTS Records(
+  recordID INTEGER NOT NULL PRIMARY KEY,
+  title varchar(50),
+  player varchar(50),
+  bestTime TEXT -- HH:MM:SS
 );
 
 CREATE TABLE IF NOT EXISTS Stats(
-  statsID integer NOT NULL PRIMARY KEY,
-  gameID integer FOREIGN KEY REFERENCES Games(gameID),
-  avgTimeToBeat numeric
+  statsID INTEGER NOT NULL PRIMARY KEY,
+  avgTimeToBeat TEXT, -- HH:MM:SS
+  recordID INTEGER,
+  FOREIGN KEY (recordID) REFERENCES Records(recordID)
 );
 
-CREATE TABLE IF NOT EXISTS Records(
-  recordID integer NOT NULL PRIMARY KEY,
-  statsID integer FOREIGN KEY REFERENCES Stats(statsID),
-  title varchar(50),
-  player varchar(50),
-  bestTime numeric
+CREATE TABLE IF NOT EXISTS Genres(
+  genreID INTEGER NOT NULL PRIMARY KEY,
+  name varchar(120)
+);
+
+CREATE TABLE IF NOT EXISTS Franchises(
+  franchiseID INTEGER NOT NULL PRIMARY KEY,
+  name varchar(120)
+);
+
+CREATE TABLE IF NOT EXISTS Sales(
+  salesID INTEGER NOT NULL PRIMARY KEY,
+  price REAL,
+  global REAL,
+  domestic REAL
 );
 
 CREATE TABLE IF NOT EXISTS Platforms(
-  platformID integer NOT NULL PRIMARY KEY,
-  name varchar(50)
+  platformID INTEGER NOT NULL PRIMARY KEY,
+  name varchar(120),
+  releaseYear INTEGER,
+  price REAL,
+  console INTEGER -- 0 for false, 1 for true
 );
 
-CREATE TABLE IF NOT EXISTS Console(
-  consoleID integer not null primary key,
-  platformID integer FOREIGN KEY REFERENCES Platforms(platformID),
-  name varchar(50),
-  releaseYear integer,
-  sales numeric
+CREATE TABLE IF NOT EXISTS Developers(
+  devID INTEGER NOT NULL PRIMARY KEY,
+  name varchar(120),
+  yearsActive INTEGER
 );
 
-CREATE TABLE IF NOT EXISTS PCClients(
-  pcClientsID integer not null primary key,
-  platformID integer FOREIGN KEY REFERENCES Platforms(platformID),
-  name varchar(50),
-  releaseYear integer
-)
+CREATE TABLE IF NOT EXISTS Studios(
+  studioID INTEGER NOT NULL PRIMARY KEY,
+  name varchar(120),
+  yearFounded INTEGER,
+  numEmployees INTEGER,
+  country varchar(120)
+);
 
 CREATE TABLE IF NOT EXISTS Games(
-  gameID integer not null primary key,
+  gameID INTEGER NOT NULL PRIMARY KEY,
   title varchar(50),
-  console varchar(50) foreign key references Console(name),
-  releaseDate integer,
-  sales numeric,
-  genre varchar(50) foreign key references Genre(genre),
-  franchise varchar(50) foreign key references Franchise(name),
-  studio varchar(50) foreign key references Studio(name),
-  leadDev varchar(50) foreign key references Developer(name),
-  averageTime numeric,
-  worldRecord numeric foreign key references WorldRecords(bestTime)
+  releaseDate TEXT, -- YYYY-MM-DD
+  genreID INTEGER,
+  franchiseID INTEGER,
+  platformID INTEGER,
+  devID INTEGER,
+  studioID INTEGER,
+  statsID INTEGER,
+  salesID INTEGER,
+  FOREIGN KEY (genreID) REFERENCES Genres(genreID),
+  FOREIGN KEY (franchiseID) REFERENCES Franchises(franchiseID),
+  FOREIGN KEY (platformID) REFERENCES Platforms(platformID),
+  FOREIGN KEY (devID) REFERENCES Developers(devID),
+  FOREIGN KEY (studioID) REFERENCES Studios(studioID),
+  FOREIGN KEY (statsID) REFERENCES Stats(statsID)
+  FOREIGN KEY (salesID) REFERENCES Sales(salesID)
 );

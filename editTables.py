@@ -3,11 +3,7 @@ from sqlite3 import Error
 
 
 def create_connection(db_file):
-    """ create a database connection to the SQLite database
-        specified by db_file
-    :param db_file: database file
-    :return: Connection object or None
-    """
+    """ create a database connection to the SQLite database"""
     conn = None
     try:
         conn = sqlite3.connect(db_file)
@@ -18,11 +14,7 @@ def create_connection(db_file):
 
 
 def input_sql_command(conn, sql_command):
-    """ takes a general sql command
-    :param conn: Connection object
-    :param create_table_sql: a CREATE TABLE statement
-    :return:
-    """
+    """ takes a general sql command"""
     try:
         c = conn.cursor()
         c.execute(sql_command)
@@ -31,12 +23,7 @@ def input_sql_command(conn, sql_command):
         print(e)
 
 def drop_table(conn, table):
-    """ drop a table from the create_table_sql statement
-    :param conn: Connection object
-    :param create_table_sql: a DROP TABLE statement
-    :return:
-    """
-
+    """ drop a table from the create_table_sql statement"""
     drop_table_sql = "DROP TABLE IF EXISTS " + table + ";"
     print(drop_table_sql)
 
