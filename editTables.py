@@ -20,6 +20,12 @@ def input_sql_command(conn, sql_command):
         conn.execute("PRAGMA foreign_keys = on")
         c.execute(sql_command)
         conn.commit()
+
+        # Read the data from the query
+        rows = c.fetchall()
+        for row in rows:
+            print(row)
+
     except Error as e:
         print(e)
 

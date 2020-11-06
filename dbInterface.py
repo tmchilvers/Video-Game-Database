@@ -45,6 +45,12 @@ def chooseFunc(_ans):
     elif _ans == '6':
         updateRecord()
 
+    elif _ans == '7':
+        chooseQuery()
+
+    else:
+        print("INVALID INPUT")
+
 ''' DATABASE FUNCTIONS ---------------------------------------------'''
 # 1. Create the video game database
 def createDatabase():
@@ -104,6 +110,34 @@ def updateRecord():
     else:
         print("Error! Cannot create the database connection.")
 
+# 7. Choose a query
+def chooseQuery():
+    conn = editTables.create_connection(DATABASE)
+    print("-----------------------------------")
+    print("\nPlease choose a query below:\n")
+    print("    1. Shows global sales by Franchise")
+    print("    2. Shows studios founded in each year")
+    print("    3. Shows games grouped by genre")
+    print("    4. Shows the games each developer has worked on")
+    print("    5. Returns world record for each game")
+    query = input('> ')
+    if conn is not None:
+        if query == '1':
+            query_command = 'SELECT g.title,f.name,s.global from Games g natural join Sales s natural join Franchises f;'
+        elif query == '2':
+            query_command = 'SELECT name, yearFounded from Studios GROUP BY yearFounded;'
+        elif query == '3':
+            query_command = 'SELECT g2.name, g1.title from Games g1 natural join Genres g2 GROUP BY g2.name;'
+        elif query == '4':
+            query_command = 'SELECT d.name, g.title from Developers d natural join Games g GROUP BY d.name;'
+        elif query == '5':
+            query_command = 'SELECT r.title, r.player, r.bestTime from Records r;'
+        else:
+            print("INVALID INPUT")
+        editTables.input_sql_command(conn, query_command)
+    else:
+        print("Error! Cannot create the database connection.")
+
 ''' MAIN ---------------------------------------------'''
 def main():
     print("Hello! This is an interface for the Video Game Database using Sqlite3.")
@@ -112,11 +146,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-####Test queries
-## SELECT g.title,f.name,s.global from Games g natural join Sales s natural join Franchises f ------ Shows global sales by franchise
-## SELECT name, yearFounded from Studios GROUP BY yearFounded --- Shows studios founded in each year
-## SELECT g2.name, g1.title from Games g1 natural join Genres g2 GROUP BY g2.name --- Shows games grouped by genre
-## SELECT d.name, g.title from Developers d natural join Games g GROUP BY d.name -- Shows the games each dev has worked on
-## Select r.title, r.player, r.bestTime from Records -- returns world record for each game
