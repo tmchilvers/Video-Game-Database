@@ -6,10 +6,12 @@ CREATE TABLE IF NOT EXISTS Records(
 );
 
 CREATE TABLE IF NOT EXISTS Stats(
-  statsID INTEGER NOT NULL PRIMARY KEY,
+  gameID INTEGER NOT NULL,
   avgTimeToBeat TEXT, -- HH:MM:SS
-  recordID INTEGER,
-  FOREIGN KEY (recordID) REFERENCES Records(recordID)
+  recordID INTEGER NOT NULL,
+  PRIMARY KEY (gameID, recordID),
+  FOREIGN KEY (recordID) REFERENCES Records(recordID),
+  FOREIGN KEY (gameID) REFERENCES Games(gameID)
 );
 
 CREATE TABLE IF NOT EXISTS Genres(
@@ -55,18 +57,16 @@ CREATE TABLE IF NOT EXISTS Games(
   gameID INTEGER NOT NULL PRIMARY KEY,
   title varchar(50),
   releaseDate TEXT, -- YYYY-MM-DD
-  genreID INTEGER,
-  franchiseID INTEGER,
-  platformID INTEGER,
-  devID INTEGER,
-  studioID INTEGER,
-  statsID INTEGER,
-  salesID INTEGER,
+  genreID INTEGER NOT NULL,
+  franchiseID INTEGER NOT NULL,
+  platformID INTEGER NOT NULL,
+  devID INTEGER NOT NULL,
+  studioID INTEGER NOT NULL,
+  salesID INTEGER NOT NULL,
   FOREIGN KEY (genreID) REFERENCES Genres(genreID),
   FOREIGN KEY (franchiseID) REFERENCES Franchises(franchiseID),
   FOREIGN KEY (platformID) REFERENCES Platforms(platformID),
   FOREIGN KEY (devID) REFERENCES Developers(devID),
   FOREIGN KEY (studioID) REFERENCES Studios(studioID),
-  FOREIGN KEY (statsID) REFERENCES Stats(statsID)
   FOREIGN KEY (salesID) REFERENCES Sales(salesID)
 );
