@@ -112,3 +112,11 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+####Test queries
+## SELECT g.title,f.name,s.global from Games g natural join Sales s natural join Franchises f ------ Shows global sales by franchise
+## SELECT name, yearFounded from Studios GROUP BY yearFounded --- Shows studios founded in each year
+## SELECT g2.name, g1.title from Games g1 natural join Genres g2 GROUP BY g2.name --- Shows games grouped by genre
+## SELECT d.name, g.title from Developers d natural join Games g GROUP BY d.name -- Shows the games each dev has worked on
+## Select r.title, r.player, r.bestTime from Records -- returns world record for each game
