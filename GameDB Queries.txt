@@ -1,0 +1,17 @@
+Select sum(bestTime) from records -> returns minimum time to complete all games in DB
+
+Select avg(global) from sales -> returns the average global sales for all games in the DB
+
+Select g.title, avg(r.score) from Games g natural join Reviews r WHERE r.reviewID = g.reviewID -> returns the average review score for each game
+
+Select p.name, c.processor from Platforms p natural join ConsoleSpecs c GROUP BY c.processor -> returns the consoles that use each processor
+
+Select g.title, i.manualPath from Games g natural join InstructionManuals i where g.manualID = i.manualID -> returns the instruction manual path for each game
+
+Select g.title, sum(d.price) from Games g natural join DLC d where d.dlcID = g.dlcID -> Returns the total price of dlc for each game
+
+Select f.name, p.name from Franchises f natural join Games g natural join Platforms p where f.franchiseID = g.franchiseID AND g.platformID = p.platformID -> Returns all platforms the franchise has games on
+
+
+
+
