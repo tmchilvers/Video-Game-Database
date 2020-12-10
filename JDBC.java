@@ -113,4 +113,78 @@ public class JDBC {
     finally{ endConn(); }
     return 1;
   }
+
+
+  public List<String> getPrimaryKey(String tableName)
+  {
+    list = new ArrayList<String>();
+    try
+    {
+       startConn(); // establish connection to database
+
+       //  Grab attributes from table
+       String sql;
+       sql = String.format("SHOW COLUMNS FROM %s", tableName);
+       ResultSet rs = stmt.executeQuery(sql);
+       //  Grab metadata to count number of columns
+       ResultSetMetaData rsmd  = rs.getMetaData();
+       Integer columnsNumber = rsmd .getColumnCount();
+
+       String res = "";
+       String temp;
+       //  Extract data from result set
+       while(rs.next())
+       {
+         for (int i=1; i<=columnsNumber-2; i++)
+         {
+           if(rs.getString(i) != null)
+            res = res.concat(rs.getString(i));
+           res = res.concat(" ");
+         }
+         res = res.concat(",");
+       }
+
+       String[] splitStr = res.trim().split(",");
+       for(String s : splitStr)
+       {
+         String[] tempSplit = s.trim().split("\\s+");
+         for(String t : tempSplit)
+         {
+           if(t.contains("PRI"))
+            list.add(tempSplit[0]);
+         }
+       }
+       //  Clean-up environment
+       rs.close();
+    }
+    catch(SQLException se){  //Handle errors for JDBC
+      System.out.println(INVALID_TABLE_ERROR);
+      list.add("-1");
+
+    } catch(Exception e){ e.printStackTrace(); } //Handle errors for Class.forName
+    // close connection to database
+    finally{ endConn(); }
+    return list;
+  }
+
+
+  // Executes sqlstatement. Returns 1 if success.
+  public int deleteFromDatabase(String statement)
+  {
+    try
+    {
+      startConn();
+      int rows = stmt.executeUpdate(statement);
+      System.out.println("Rows deleted from Table: " + rows);
+    }
+
+    catch(SQLException se){  //Handle errors for JDBC
+      System.out.println(INVALID_ATTRIBUTE_ERROR);
+      return 0;
+
+    } catch(Exception e){ e.printStackTrace(); } //Handle errors for Class.forName
+    // close connection to database
+    finally{ endConn(); }
+    return 1;
+  }
 }
