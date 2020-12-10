@@ -115,6 +115,27 @@ public class JDBC {
   }
 
 
+  // Executes sqlstatement. Returns 1 if success.
+  public int updateDatabase(String statement)
+  {
+    try
+    {
+      startConn();
+      int rows = stmt.executeUpdate(statement);
+      System.out.println("Rows updated in Table: " + rows);
+    }
+
+    catch(SQLException se){  //Handle errors for JDBC
+      System.out.println(INVALID_ATTRIBUTE_ERROR);
+      return 0;
+
+    } catch(Exception e){ e.printStackTrace(); } //Handle errors for Class.forName
+    // close connection to database
+    finally{ endConn(); }
+    return 1;
+  }
+
+
   public List<String> getPrimaryKey(String tableName)
   {
     list = new ArrayList<String>();

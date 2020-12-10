@@ -40,13 +40,16 @@ public class Interface extends Application
   private static final String GET_TABLE_BUTTON = "Get Table Attributes";
   private static final String GET_KEY_BUTTON = "Get Primary Key";
   private static final String INSERT_RECORD_BUTTON = "Insert Record";
+  private static final String UPDATE_RECORD_BUTTON = "Update Record";
   private static final String DELETE_RECORD_BUTTON = "Delete Record";
   private static final String CONFIRM_INSERT_BUTTON = "Confirm Insert Statement";
+  private static final String CONFIRM_UPDATE_BUTTON = "Confirm Update Statement";
   private static final String CONFIRM_DELETE_BUTTON = "Confirm Delete Statement";
   private static final String EXIT_BUTTON = "Exit";
 
   // Textfield
   private static final String INPUT_TABLE_TEXTFIELD_INSERT = "Games";
+  private static final String INPUT_TABLE_TEXTFIELD_UPDATE = "Developers";
   private static final String INPUT_TABLE_TEXTFIELD_DELETE = "Franchises";
 
   // Errors
@@ -56,18 +59,19 @@ public class Interface extends Application
   //  VARIABLES ================================================================
   private Stage window;
   private Button insertButton, deleteButton, updateButton,
-                 backMainButton1, backMainButton2, backMainButton3, getTable,
-                 insertRec, confirmInsert, getKey, deleteRec, confirmDelete, exitButton;
+                 backMainButton1, backMainButton2, backMainButton3, getTable, getTable2,
+                 insertRec, updateRec, confirmInsert, confirmUpdate, getKey, deleteRec, confirmDelete, exitButton;
   private Scene mainPage, insertPage, updatePage, deletePage;
-  private Label mainLabel, insertLabel, updateLabel, deleteLabel, tableLabel, tableLabel3,
-                finalInsertLabel, finalDeleteLabel, successLabel, successLabel3,
+  private Label mainLabel, insertLabel, updateLabel, deleteLabel, tableLabel, tableLabel2, tableLabel3,
+                finalInsertLabel, finalUpdateLabel, finalDeleteLabel, successLabel, successLabel2, successLabel3,
                 editSchemaLabel, querySchemaLabel;
-  private TextField tableName, inputTable, inputTable3;
+  private TextField tableName, inputTable, inputTable2, inputTable3;
   private GridPane mainGrid, insertGrid, updateGrid, deleteGrid;
-  private String table, insertStatement, deleteStatement;
+  private String table, insertStatement, updateStatement, deleteStatement;
   private int y; // position of the insert record button
   private Alert a;
   private List<String> key;
+  private List<String> updateList;
 
   //  CLASSES ------------------------------------------------------------------
   public JDBC jdbc;
@@ -128,6 +132,10 @@ public class Interface extends Application
     getTable = new Button(GET_TABLE_BUTTON);
     getTable.setOnAction(e -> insertRecord(inputTable.getText()));
 
+    // Grab table name from user
+    getTable2 = new Button(GET_TABLE_BUTTON);
+    getTable2.setOnAction(e -> updateRecord(inputTable2.getText()));
+
     // Grab table name from user to get primary key
     getKey = new Button(GET_KEY_BUTTON);
     getKey.setOnAction(e -> deleteRecord(inputTable3.getText()));
@@ -136,6 +144,10 @@ public class Interface extends Application
     insertRec = new Button(INSERT_RECORD_BUTTON);
     insertRec.setOnAction(e -> createInsertStatement());
 
+    // Update record from table
+    updateRec = new Button(UPDATE_RECORD_BUTTON);
+    updateRec.setOnAction(e -> createUpdateStatement());
+
     // Delete record from table
     deleteRec = new Button(DELETE_RECORD_BUTTON);
     deleteRec.setOnAction(e -> createDeleteStatement());
@@ -143,6 +155,10 @@ public class Interface extends Application
     // Confirm Insert Record
     confirmInsert = new Button(CONFIRM_INSERT_BUTTON);
     confirmInsert.setOnAction(e -> finalizeInsert());
+
+    // Confirm Update Record
+    confirmUpdate = new Button(CONFIRM_UPDATE_BUTTON);
+    confirmUpdate.setOnAction(e -> finalizeUpdate());
 
     // Confirm Delete Record
     confirmDelete = new Button(CONFIRM_DELETE_BUTTON);
@@ -156,13 +172,18 @@ public class Interface extends Application
     updateLabel = new Label(UPDATE_LABEL);
     deleteLabel = new Label(DELETE_LABEL);
     tableLabel = new Label(INSERT_TABLE_LABEL);
+    tableLabel2 = new Label(INSERT_TABLE_LABEL);
     tableLabel3 = new Label(INSERT_TABLE_LABEL);
     successLabel = new Label(SUCCESS_LABEL);
+    successLabel2 = new Label(SUCCESS_LABEL);
     successLabel3 = new Label(SUCCESS_LABEL);
 
     // TEXTFIELD ---------------------------------------------------------------
     inputTable = new TextField();
     inputTable.setPromptText(INPUT_TABLE_TEXTFIELD_INSERT);
+
+    inputTable2 = new TextField();
+    inputTable2.setPromptText(INPUT_TABLE_TEXTFIELD_UPDATE);
 
     inputTable3 = new TextField();
     inputTable3.setPromptText(INPUT_TABLE_TEXTFIELD_DELETE);
@@ -177,6 +198,11 @@ public class Interface extends Application
     insertGrid.setPadding(new Insets(10,10,10,10));
     insertGrid.setVgap(8);
     insertGrid.setHgap(10);
+
+    updateGrid = new GridPane();
+    updateGrid.setPadding(new Insets(10,10,10,10));
+    updateGrid.setVgap(8);
+    updateGrid.setHgap(10);
 
     deleteGrid = new GridPane();
     deleteGrid.setPadding(new Insets(10,10,10,10));
@@ -208,13 +234,17 @@ public class Interface extends Application
     insertGrid.getChildren().addAll(insertLabel, tableLabel, inputTable, getTable, backMainButton1);
 
     // Update Page =============================================================
-    updateGrid = new GridPane();
-    updateGrid.setPadding(new Insets(10,10,10,10));
-    updateGrid.setVgap(8);
-    updateGrid.setHgap(10);
-    GridPane.setConstraints(updateLabel, 1,0);
-    GridPane.setConstraints(backMainButton2, 0,1);
-    updateGrid.getChildren().addAll(updateLabel, backMainButton2);
+    GridPane.setConstraints(updateLabel, 0,0,3,1);
+    GridPane.setHalignment(updateLabel, HPos.CENTER);
+    GridPane.setConstraints(tableLabel2, 0,1,1,1);
+    GridPane.setHalignment(tableLabel2, HPos.RIGHT);
+    GridPane.setConstraints(inputTable2, 1,1);
+    GridPane.setConstraints(getTable2, 0,2,2,1);
+    GridPane.setConstraints(backMainButton2, 0,8);
+    GridPane.setConstraints(confirmUpdate, 0,7,2,1);
+    GridPane.setConstraints(successLabel2, 0,3);
+    updateGrid.setAlignment(Pos.CENTER);
+    updateGrid.getChildren().addAll(updateLabel, tableLabel2, inputTable2, getTable2, backMainButton2);
 
     // Delete Page =============================================================
     GridPane.setConstraints(deleteLabel, 0,0,3,1);
@@ -325,6 +355,124 @@ public class Interface extends Application
     else
     {
       insertGrid.getChildren().add(backMainButton1); // add last for correct tabbing
+      a.display("ERROR", INVALID_ATTRIBUTE_ERROR);
+      return;
+    }
+  }
+
+  //  UPDATE HELP METHODS ======================================================
+  //  Shows list of attributes from requested table ----------------------------
+  public void updateRecord(String tableName)
+  {
+    // Clear/refresh the page
+    updateGrid.getChildren().clear();
+    updateGrid.getChildren().addAll(updateLabel, tableLabel2, inputTable2, getTable2);
+
+    //  Get list of attributes from the table, returned by JDBC
+    updateList = new ArrayList<String>();
+    updateList = jdbc.getTableAttributes(tableName);
+
+    if(updateList.get(0) == "-1")
+    {
+      updateGrid.getChildren().add(backMainButton2); // add last for correct tabbing
+      a.display("ERROR", INVALID_TABLE_ERROR);
+      return;
+    }
+
+    //  Print each attribute onto the page
+    int x = 0;
+    y = 3;
+    for(String s:updateList)
+    {
+      TextField tempTextField = new TextField();
+      tempTextField.setPromptText(s);
+      updateGrid.add(tempTextField, x, y);
+      x++;
+      // Every 7 attribues move to next row
+      if (x==7)
+      {
+        x = 0;
+        y++;
+      }
+    }
+    // Add the insert record button after attributes have been found
+    updateGrid.add(updateRec, 0, ++y);
+    updateGrid.getChildren().add(backMainButton2); // add last for correct tabbing
+  }
+
+  //  Grab values from user and create statement -------------------------------
+  public void createUpdateStatement()
+  {
+    updateGrid.getChildren().removeIf(node -> GridPane.getRowIndex(node) == y);
+    updateGrid.getChildren().removeIf(node -> GridPane.getRowIndex(node) == 8);
+    // Grab table and create skeleton of insert statement
+    table = inputTable2.getText();
+    updateStatement = String.format("UPDATE IGNORE %s SET ", table);
+
+    List<String> keys = new ArrayList<String>();
+    List<String> keyValues = new ArrayList<String>();
+    keys = jdbc.getPrimaryKey(table);
+
+    // Grab each attribute input from user
+    int i = 0, j = 0;
+    for (Node node : updateGrid.getChildren())
+    {
+      if(node instanceof TextField && (GridPane.getRowIndex(node) == 3) && (j < keys.size()) && (updateList.get(i).equals(keys.get(j))))
+      {
+        System.out.println(keys.get(j) + " " + ((TextField)node).getText());
+        keyValues.add(((TextField)node).getText());
+        i++;
+        j++;
+        continue;
+      }
+
+      if(node instanceof TextField && (GridPane.getRowIndex(node) == 3 || GridPane.getRowIndex(node) == 4))
+      {
+        updateStatement = updateStatement.concat(updateList.get(i));
+        updateStatement = updateStatement.concat("=");
+        updateStatement = updateStatement.concat(((TextField)node).getText());
+        updateStatement = updateStatement.concat(", ");
+        i++;
+      }
+    }
+    // Remove the extra comma at the end and finish the statement
+    updateStatement = updateStatement.substring(0, updateStatement.length() - 2);
+    updateStatement = updateStatement.concat(" WHERE ");
+
+    i = 0;
+    for(String s : keys)
+    {
+      updateStatement = updateStatement.concat(String.format("%s=%s ", s, keyValues.get(i)));
+      updateStatement = updateStatement.concat(" AND ");
+      i++;
+    }
+
+    updateStatement = updateStatement.substring(0, updateStatement.length() - 5);
+    updateStatement = updateStatement.concat(";");
+    System.out.println(updateStatement);
+    // Show final statement to user
+    finalUpdateLabel = new Label(updateStatement);
+    GridPane.setConstraints(finalUpdateLabel, 0,6,7,1);
+    updateGrid.getChildren().addAll(finalUpdateLabel, confirmUpdate, backMainButton2);
+  }
+
+  // Last step of inserting record, try to insert and write back result --------
+  public void finalizeUpdate()
+  {
+    int success = jdbc.updateDatabase(updateStatement);
+    // Clear/refresh the page
+    updateGrid.getChildren().clear();
+    updateGrid.getChildren().addAll(updateLabel, tableLabel2, inputTable2, getTable2);
+
+    // Print to page if successful or not.
+    if (success == 1)
+    {
+      updateGrid.getChildren().add(successLabel);
+      updateGrid.getChildren().add(backMainButton2); // add last for correct tabbing
+    }
+    else
+    {
+      updateGrid.getChildren().add(backMainButton2); // add last for correct tabbing
       a.display("ERROR", INVALID_ATTRIBUTE_ERROR);
       return;
     }
