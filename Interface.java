@@ -6,6 +6,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.GridPane;
@@ -15,12 +16,33 @@ import javafx.geometry.Pos;
 import javafx.geometry.HPos;
 import java.util.*;
 
+//  Return how many records each player has and their best time
+//  SELECT player, bestTime, COUNT(player) AS NumOfRecords FROM records GROUP BY player;
+
+//  Return global sales for games that had domestic sales greater than 50 (million)
+//  SELECT title, global FROM sales NATURAL JOIN games WHERE domestic > 50;
+
+//  Grab average score for every game
+//  SELECT games.title, AVG(score) AS avgScore FROM reviews NATURAL JOIN games GROUP BY games.title;
+
+//  Return consoles that use each processor
+//  SELECT p.name, c.processor FROM Platforms p NATURAL JOIN ConsoleSpecs c GROUP BY c.processor;
+
+//  Grab the instruction manuals for every game
+//  SELECT g.title, i.manualPath FROM Games g NATURAL JOIN InstructionManuals i GROUP BY g.title;
+
+//  Find games that are less tha $60.
+//  SELECT g.title, d.price FROM Games g NATURAL JOIN DLC d WHERE d.price < 60 GROUP BY g.title;
+
+//  Find platforms that franchises are found on
+//  SELECT DISTINCT f.name, p.name FROM platforms p, games g, franchises f WHERE g.platformid=p.platformid AND f.franchiseid=g.franchiseid ORDER BY f.name;
+
 public class Interface extends Application
 {
   //  CONSTANTS ================================================================
   private static final String STAGE_TITLE = "Video Game Database";
   private static final int WIDTH = 850; // window x size
-  private static final int LENGTH = 500; // window y size
+  private static final int LENGTH = 600; // window y size
 
   // Label Titles
   private static final String MAIN_LABEL = "Welcome to the Video Game Database";
@@ -46,6 +68,10 @@ public class Interface extends Application
   private static final String CONFIRM_UPDATE_BUTTON = "Confirm Update Statement";
   private static final String CONFIRM_DELETE_BUTTON = "Confirm Delete Statement";
   private static final String EXIT_BUTTON = "Exit";
+  private static final String QUERY_BUTTON_FIRST = "Return how many records each player has and their best time.";
+  private static final String QUERY_BUTTON_SECOND = "Return global sales for games that had domestic sales greater than 50 (million).";
+  private static final String QUERY_FIRST = "SELECT player, bestTime, COUNT(player) AS NumOfRecords FROM records GROUP BY player;";
+  private static final String QUERY_SECOND = "SELECT title, global FROM sales NATURAL JOIN games WHERE domestic > 50;";
 
   // Textfield
   private static final String INPUT_TABLE_TEXTFIELD_INSERT = "Games";
@@ -60,18 +86,21 @@ public class Interface extends Application
   private Stage window;
   private Button insertButton, deleteButton, updateButton,
                  backMainButton1, backMainButton2, backMainButton3, getTable, getTable2,
-                 insertRec, updateRec, confirmInsert, confirmUpdate, getKey, deleteRec, confirmDelete, exitButton;
+                 insertRec, updateRec, confirmInsert, confirmUpdate, getKey, deleteRec, confirmDelete, exitButton,
+                 queryButton1, queryButton2;
   private Scene mainPage, insertPage, updatePage, deletePage;
   private Label mainLabel, insertLabel, updateLabel, deleteLabel, tableLabel, tableLabel2, tableLabel3,
                 finalInsertLabel, finalUpdateLabel, finalDeleteLabel, successLabel, successLabel2, successLabel3,
                 editSchemaLabel, querySchemaLabel;
   private TextField tableName, inputTable, inputTable2, inputTable3;
+  private ListView<String> listView;
   private GridPane mainGrid, insertGrid, updateGrid, deleteGrid;
   private String table, insertStatement, updateStatement, deleteStatement;
   private int y; // position of the insert record button
   private Alert a;
   private List<String> key;
   private List<String> updateList;
+  public List<String> res;
 
   //  CLASSES ------------------------------------------------------------------
   public JDBC jdbc;
@@ -96,6 +125,7 @@ public class Interface extends Application
     window = primaryStage;
     jdbc = new JDBC();
     a = new Alert();
+    res = new ArrayList<String>();
     window.setOnCloseRequest(e -> {
       e.consume();
       exitProgram();
@@ -164,6 +194,14 @@ public class Interface extends Application
     confirmDelete = new Button(CONFIRM_DELETE_BUTTON);
     confirmDelete.setOnAction(e -> finalizeDelete());
 
+    //
+    queryButton1 = new Button(QUERY_BUTTON_FIRST);
+    queryButton1.setOnAction(e -> makeQuery(QUERY_FIRST, 3));
+
+    //
+    queryButton2 = new Button(QUERY_BUTTON_SECOND);
+    queryButton2.setOnAction(e -> makeQuery(QUERY_SECOND, 2));
+
     // LABELS ------------------------------------------------------------------
     mainLabel = new Label(MAIN_LABEL);
     editSchemaLabel = new Label(EDIT_SCHEMA_LABEL);
@@ -177,6 +215,9 @@ public class Interface extends Application
     successLabel = new Label(SUCCESS_LABEL);
     successLabel2 = new Label(SUCCESS_LABEL);
     successLabel3 = new Label(SUCCESS_LABEL);
+
+    //  LISTVIEW ---------------------------------------------------------------
+    listView = new ListView<>();
 
     // TEXTFIELD ---------------------------------------------------------------
     inputTable = new TextField();
@@ -216,9 +257,12 @@ public class Interface extends Application
     GridPane.setConstraints(updateButton, 1,2);
     GridPane.setConstraints(deleteButton, 2,2);
     GridPane.setConstraints(querySchemaLabel, 0,3);
-    GridPane.setConstraints(exitButton,0,5);
+    GridPane.setConstraints(queryButton1, 0,4,3,1);
+    GridPane.setConstraints(queryButton2, 0,5,3,1);
+    GridPane.setConstraints(listView, 0,9, 3,1);
+    GridPane.setConstraints(exitButton, 0,10);
     mainGrid.setAlignment(Pos.CENTER);
-    mainGrid.getChildren().addAll(mainLabel, editSchemaLabel, insertButton, updateButton, deleteButton, querySchemaLabel, exitButton);
+    mainGrid.getChildren().addAll(mainLabel, editSchemaLabel, insertButton, updateButton, deleteButton, querySchemaLabel, queryButton1, queryButton2, listView, exitButton);
 
     // Insert Page =============================================================
     GridPane.setConstraints(insertLabel, 0,0,3,1);
@@ -564,5 +608,17 @@ public class Interface extends Application
       a.display("ERROR", INVALID_ATTRIBUTE_ERROR);
       return;
     }
+  }
+
+  public void makeQuery(String query, int columns)
+  {
+    listView.getItems().clear();
+    res = jdbc.query(query, columns);
+
+    for(String s:res)
+    {
+      listView.getItems().add(s);
+    }
+    res.clear();
   }
 }

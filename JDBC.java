@@ -6,7 +6,7 @@ public class JDBC {
    //  CONSTANTS ===============================================================
    //  JDBC driver name and database URL
    private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-   private static final String DB_URL = "jdbc:mysql://localhost/cpsc408_2290022_2288893?serverTimezone=UTC";
+   private static final String DB_URL = "jdbc:mysql://localhost/cpsc408_2288893_2290022?serverTimezone=UTC";
    private static final String INVALID_TABLE_ERROR = "The inputted table does not exist. Please enter a valid table.";
    private static final String INVALID_ATTRIBUTE_ERROR = "One or more of the attributes is invalid.";
 
@@ -208,4 +208,40 @@ public class JDBC {
     finally{ endConn(); }
     return 1;
   }
+
+
+    // Executes sqlstatement. Returns 1 if success.
+    public List<String> query(String statement, int columns)
+    {
+      list = new ArrayList<String>();
+      try
+      {
+        String temp = "";
+        startConn();
+        ResultSet rs = stmt.executeQuery(statement);
+        //  Extract data from result set
+        while(rs.next())
+        {
+          for (int i=1; i<=columns; i++)
+          {
+            if(rs.getString(i) != null)
+             temp = temp.concat(rs.getString(i));
+            temp = temp.concat(" ");
+          }
+          list.add(temp);
+          temp = "";
+        }
+        System.out.println("finished!");
+      }
+
+      catch(SQLException se){  //Handle errors for JDBC
+        System.out.println(INVALID_ATTRIBUTE_ERROR);
+        list.add("0");
+        return list;
+
+      } catch(Exception e){ e.printStackTrace(); } //Handle errors for Class.forName
+      // close connection to database
+      finally{ endConn(); }
+      return list;
+    }
 }

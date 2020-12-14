@@ -10,6 +10,24 @@ CREATE TABLE IF NOT EXISTS Genres(
   name varchar(120)
 );
 
+CREATE TABLE IF NOT EXISTS Genres_audit(
+  ID int NOT NULL AUTO_INCREMENT,
+  genreID INTEGER NOT NULL,
+  name varchar(120),
+  changedate DATETIME DEFAULT NULL,
+  action VARCHAR(50) DEFAULT NULL,
+  PRIMARY KEY (ID)
+);
+
+CREATE TRIGGER before_genres_update
+    BEFORE UPDATE ON genres
+    FOR EACH ROW
+ INSERT INTO genres_audit
+ SET action = 'update',
+     genreID = OLD.genreID,
+     name = OLD.name,
+     changedate = NOW();
+
 CREATE TABLE IF NOT EXISTS Franchises(
   franchiseID INTEGER NOT NULL PRIMARY KEY,
   name varchar(120)
@@ -36,9 +54,9 @@ CREATE TABLE IF NOT EXISTS BoxArts(
 
 CREATE TABLE IF NOT EXISTS ConsoleSpecs(
   consoleSpecID INTEGER NOT NULL PRIMARY KEY,
-  resolution INTEGER,
-  RAM INTEGER, -- measured in GB
-  GPU INTEGER, -- measured in MHz
+  resolution varchar(100),
+  RAM varchar(100), -- measured in GB
+  GPU varchar(100),
   processor varchar(100)
 );
 
@@ -47,7 +65,6 @@ CREATE TABLE IF NOT EXISTS Platforms(
   name varchar(120),
   releaseYear INTEGER,
   price REAL,
-  console INTEGER, -- 0 for false, 1 for true
   consoleSpecID INTEGER NOT NULL,
   FOREIGN KEY (consoleSpecID) REFERENCES ConsoleSpecs(consoleSpecID)
   ON DELETE CASCADE
