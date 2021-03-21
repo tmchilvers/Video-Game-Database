@@ -1,6 +1,9 @@
-# VideoGameDatabase
-Designed by Tristan Chilvers and Jonathan Bahm. <br/>
-There is also a PNG of the schema to help visualize the database 
+# Video Game Database - MySQL <br/>
+Designed by Tristan Chilvers and Jonathan Bahm. <br/><br/>
+An original, user friendly interface that connects to a MySQL database to manage a Video Game database.<br/>
+It is built in a Java environment (JDBC driver) and the GUI is JavaFX dependent, so please ensure that Java is installed in your computer and read below how to install JavaFX. MySQL must also be installed as well.<br/><br/>
+A PNG of the schema is available to help visualize the database.<br/>
+The database offers essential, but basic functionality and serves as an educational exercise.<br/>
 
 ## Install JavaFX
 Helpful link for setting up: https://openjfx.io/openjfx-docs/#introduction <br/>
